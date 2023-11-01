@@ -1,0 +1,39 @@
+.xstudio {
+  overflow: hidden;
+  .xstudio-header {
+    width: 100%;
+    height: 32px;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(5, 5, 5, 0.1);
+    color: #6246ea;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .xstudio-layout {
+    width: 100%;
+    height: calc(100vh - 32px);
+    display: flex;
+    background: #ffffff;
+    .xstudio-layout-menu {
+      height: 100%;
+      background: #ffffff;
+      ul {
+        height: 100vh;
+      }
+      .ant-menu-inline-collapsed {
+        width: 50px;
+      }
+      .ant-menu-vertical {
+        border-inline-end: 1px solid rgba(5, 5, 5, 0.1);
+      }
+    }
+    .xstudio-layout-content {
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      display: flex;
+    }
+  }
+}
