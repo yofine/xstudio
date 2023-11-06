@@ -7,11 +7,7 @@ import Setting from "./pages/Setting";
 export default [
   {
     path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/home",
-    element: <Home />,
+    element: <Prompt />,
   },
   {
     path: "/prompt",

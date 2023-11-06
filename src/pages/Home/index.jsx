@@ -4,7 +4,7 @@ import "./index.less";
 
 function Home() {
   return (
-    <div className="xstudio-home">
+    <div className="xstudio-home flex-center">
       <a href="https://vitejs.dev" target="_blank">
         <img src={viteLogo} className="logo" alt="Vite logo" />
       </a>

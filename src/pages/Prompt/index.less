@@ -5,12 +5,8 @@
   grid-template-rows: 100%;
   grid-template-columns: 300px auto 500px;
   .left {
-    display: grid;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
-    .prompt-module {
+    .prompt-explorer {
       overflow-y: auto;
-      border-bottom: 1px solid rgba(5, 5, 5, 0.1);
-      padding: 16px;
       .module-title {
         font-size: 18px;
       }
@@ -18,7 +14,12 @@
         padding-top: 8px;
         display: flex;
         align-items: center;
-        justify-content: start;
+      }
+      .ant-collapse {
+        border-radius: 0;
+      }
+      .ant-tree {
+        background: transparent;
       }
     }
   }
@@ -26,15 +27,11 @@
     border-left: 1px solid rgba(5, 5, 5, 0.1);
     border-right: 1px solid rgba(5, 5, 5, 0.1);
     .prompt-editor {
-      height: 100%;
     }
   }
   .right {
     .prompt-debug {
-      height: 100%;
-      padding: 16px;
       .debug-title {
-        font-size: 18px;
       }
     }
   }
