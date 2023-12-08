@@ -1,34 +1,34 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React from 'react';
+import { Outlet } from 'react-router-dom';
 import {
   CodeOutlined,
   ToolOutlined,
   BookOutlined,
   SettingOutlined,
-} from "@ant-design/icons";
-import { Menu, Avatar } from "antd";
-import { useNavigate, useLocation } from "react-router-dom";
-import "./index.less";
+} from '@ant-design/icons';
+import { Menu, Avatar } from 'antd';
+import { useNavigate, useLocation } from 'react-router-dom';
+import './index.less';
 
 const items = [
   {
-    label: "Prompt 开发",
-    key: "prompt",
+    label: 'Prompt 开发',
+    key: 'prompt',
     icon: <CodeOutlined />,
   },
   {
-    label: "Tool 管理",
-    key: "tools",
+    label: 'Tool 管理',
+    key: 'tools',
     icon: <ToolOutlined />,
   },
   {
-    label: "知识库管理",
-    key: "knowledge",
+    label: '知识库管理',
+    key: 'knowledge',
     icon: <BookOutlined />,
   },
   {
-    label: "设置",
-    key: "setting",
+    label: '设置',
+    key: 'setting',
     icon: <SettingOutlined />,
   },
 ];
@@ -36,10 +36,10 @@ const items = [
 export default function BaseLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("🚀 ~ file: index.jsx:39 ~ BaseLayout ~ location:", location);
-  const defaultSelectedKeys = location.pathname.split("/")[1];
+  console.log('🚀 ~ file: index.jsx:39 ~ BaseLayout ~ location:', location);
+  const defaultSelectedKeys = location.pathname.split('/')[1];
   console.log(
-    "🚀 ~ file: index.jsx:41 ~ BaseLayout ~ defaultSelectedKeys:",
+    '🚀 ~ file: index.jsx:41 ~ BaseLayout ~ defaultSelectedKeys:',
     defaultSelectedKeys
   );
 

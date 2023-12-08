@@ -1,0 +1,30 @@
+.prompt-session {
+  width: 100%;
+  height: calc(100vh - 100px);
+  overflow-y: scroll;
+
+  &-wrapper {
+    padding: 16px;
+  }
+
+  &-message {
+    width: 100%;
+    display: flex;
+    padding: 4px;
+
+    &-balloon {
+      max-width: 70%;
+      background-color: rgb(248 250 252);
+      border: 1px solid #9c9c9c;
+      border-radius: 4px;
+      padding: 4px 12px;
+      word-break: break-all;
+      word-wrap: break-word;
+    }
+
+    &-right {
+      justify-content: flex-end;
+      background-color: rgb(219 234 254);
+    }
+  }
+}

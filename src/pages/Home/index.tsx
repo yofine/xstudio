@@ -1,6 +1,6 @@
-import reactLogo from "../../assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./index.less";
+import reactLogo from '../../assets/react.svg';
+import viteLogo from '/vite.svg';
+import './index.less';
 
 function Home() {
   return (
