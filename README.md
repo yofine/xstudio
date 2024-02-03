@@ -13,6 +13,3 @@ $ npm run dev
 git push origin main
 ```
 
-## Preview Site
-
-https://main--majestic-frangipane-5cce90.netlify.app/
