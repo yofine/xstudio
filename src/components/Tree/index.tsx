@@ -81,7 +81,7 @@ const App = (props: TreePropType) => {
       multiple={false}
       onSelect={onNodeSelect}
       onRightClick={onNodeRightClick}
-      treeData={treeData}
+      treeData={mockTreeData}
     />
   );
 };

@@ -35,7 +35,7 @@ export const getProjectList = (
 };
 
 export const getProjectFileTree = (projectId: number): Promise<any> => {
-  return axios.get(`/project/tree/${projectId}`);
+  return axios.get(`/project/tree/get/${projectId}`);
 };
 
 export const getPromptTemplate = (

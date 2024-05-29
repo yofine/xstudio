@@ -57,22 +57,22 @@ export default class Prompt extends React.Component<
     // });
     getProjectFileTree(this.projectId).then((res) => {
       // 树结构转化
-      // const convert = (node) => {
-      //   return {
-      //     key: node.id,
-      //     title:
-      //       node.title +
-      //       (node.type && node.type !== 'folder' ? '.' + node.type : ''),
-      //     ...('children' in node
-      //       ? {
-      //           children: (node.children || []).map((child) => convert(child)),
-      //         }
-      //       : null),
-      //   };
-      // };
-      // const treenodeData = convert(res)
+      const convert = (node) => {
+        return {
+          key: node.id,
+          title:
+            node.title +
+            (node.type && node.type !== 'folder' ? '.' + node.type : ''),
+          ...('children' in node
+            ? {
+                children: (node.children || []).map((child) => convert(child)),
+              }
+            : null),
+        };
+      };
+      const treenodeData = convert(res)
 
-      const treenodeData = res;
+//       const treenodeData = res;
       this.setState({
         projectTree: treenodeData,
       });
@@ -160,7 +160,7 @@ export default class Prompt extends React.Component<
     const { confirm } = Modal;
     // TODO: 编译template
     // compilePromptTemplate()
-    const content = `🚀 ~ create prompt from template using<${promptText}>`;
+    const content = "🚀 ~ create prompt from template using<${promptText}>";
 
     confirm({
       title: 'create prompt',

@@ -6,23 +6,23 @@ import Setting from "./pages/Setting";
 
 export default [
   {
-    path: "/",
+    path: "home",
+    element: <Home />,
+  },
+  {
+    path: "prompt",
     element: <Prompt />,
   },
   {
-    path: "/prompt",
-    element: <Prompt />,
-  },
-  {
-    path: "/tools",
+    path: "tools",
     element: <Tools />,
   },
   {
-    path: "/knowledge",
+    path: "knowledge",
     element: <Knowledge />,
   },
   {
-    path: "/setting",
+    path: "setting",
     element: <Setting />,
   },
 ];

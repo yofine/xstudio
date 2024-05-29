@@ -1,19 +1,39 @@
+import React from 'react';
 import routes from "./routes";
 import Layout from "./layout/BaseLayout";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { AuthProvider, useAuth } from "./AuthContext";
+import Login from "./pages/Login";
 
-// 引入 react router 6
+const ProtectedRoute = () => {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <Outlet /> : <Login />;
+};
 
 const router = createBrowserRouter([
   {
+    path: "/login",
+    element: <Login />,
+  },
+  {
     path: "/",
-    element: <Layout />,
-    children: routes,
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/",
+        element: <Layout />,
+        children: routes,
+      },
+    ],
   },
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 }
 
 export default App;
