@@ -36,20 +36,16 @@ const items = [
 export default function BaseLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log('🚀 ~ file: index.jsx:39 ~ BaseLayout ~ location:', location);
   const defaultSelectedKeys = location.pathname.split('/')[1];
-  console.log(
-    '🚀 ~ file: index.jsx:41 ~ BaseLayout ~ defaultSelectedKeys:',
-    defaultSelectedKeys
-  );
 
   const handleMenuClick = ({ key }) => {
     navigate(`/${key}`);
   };
+
   return (
     <div className="xstudio">
       <div className="xstudio-header pl-6 pr-6 justify-between items-center flex">
-        <div className="xstudio-header-logo cursor-pointer text-2xl font-bold	 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 inline-block text-transparent bg-clip-text">
+        <div className="xstudio-header-logo cursor-pointer text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 inline-block text-transparent bg-clip-text">
           XStudio
         </div>
         <div className="xstudio-header-user">
