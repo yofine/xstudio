@@ -196,7 +196,7 @@ export default class Prompt extends React.Component<
           >
             <div>Project</div>
             <Button
-              onClick={this.handleAddAgent}
+              onClick={this.createPrompt}
               type="text"
               icon={<PlusOutlined />}
             />

@@ -114,7 +114,7 @@ const App = (props: TreePropType) => {
                 <ContextMenuTrigger id={treeNode.id}>
                   <div className="well">{treeNode.name}</div>
                 </ContextMenuTrigger>
-                <ContextMenu style={{zIndex: 9999}} id={treeNode.id}>
+                <ContextMenu hideOnLeave style={{zIndex: 9999}} id={treeNode.id}>
                   <RightClickMenu />
                 </ContextMenu>
               </div>
