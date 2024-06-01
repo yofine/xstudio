@@ -1,15 +1,20 @@
-import React from 'react';
-import Tree from '../../components/Tree';
-import { Collapse, message, Modal, Button } from 'antd';
-import { SessionMessageType } from '@/types/components';
-import { PromptBlockType } from '@/types/prompt';
-import PromptEditor from '../../components/editor';
-import PromptSession from '@/components/session';
-import PromptFile from '@/core/promptFile';
-import RightClickMenu from '../../components/Menu'; // 引入右键菜单组件
+import React from "react";
+import Tree from "../../components/Tree";
+import { Collapse, message, Modal, Button, Dropdown, MenuProps } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { SessionMessageType } from "@/types/components";
+import { PromptBlockType } from "@/types/prompt";
+import PromptEditor from "../../components/editor";
+import PromptSession from "@/components/session";
+import PromptFile from "@/core/promptFile";
+import RightClickMenu from "../../components/Menu"; // 引入右键菜单组件
 
-import './index.less';
-import { getRandom } from '../../utils/utils';
+import "./index.less";
+import { getRandom } from "../../utils/utils";
+
+function handleClick(e, data) {
+  console.log(data.foo);
+}
 
 import {
   getProjectFileTree,
@@ -18,8 +23,8 @@ import {
   getProjectList,
   updatePrompTemplate,
   compilePromptTemplate,
-} from '@/api/api';
-import { mock_project1_tree } from '@/mock';
+} from "@/api/api";
+import { mock_project1_tree } from "@/mock";
 
 const text = `
   A dog is a type of domesticated animal.
@@ -40,8 +45,8 @@ export default class Prompt extends React.Component<
     super(props);
     this.state = {
       currentPromptFile: null,
-      promptText: '',
-      messageList: [{ type: 'receive', message: 'hello world' }],
+      promptText: "",
+      messageList: [{ type: "receive", message: "hello world" }],
       projectTree: [],
     };
   }
@@ -52,14 +57,16 @@ export default class Prompt extends React.Component<
     getProjectFileTree(this.projectId).then((res) => {
       // 树结构转化
       const convert = (node) => {
+        console.log("🚀 ~ convert ~ node:", node);
         return {
           key: node.id,
           title: node.name,
-          children: node.children ? node.children.map((child) => convert(child)) : [],
+          children: node.children
+            ? node.children.map((child) => convert(child))
+            : [],
         };
       };
       const treenodeData = res.template_tree.map((node) => convert(node));
-      console.log(treenodeData);
       this.setState({
         projectTree: treenodeData,
       });
@@ -72,7 +79,7 @@ export default class Prompt extends React.Component<
 
   onPrompFiletOpen({ type, title, id }) {
     const fetchFileContentPromise =
-      type === 'section' ? getPromptSection : getPromptTemplate;
+      type === "section" ? getPromptSection : getPromptTemplate;
 
     fetchFileContentPromise(id).then((res) => {
       const currentFile = new PromptFile(
@@ -95,14 +102,14 @@ export default class Prompt extends React.Component<
     const { currentPromptFile } = this.state;
     if (currentPromptFile) {
       const text = currentPromptFile.getContent();
-      if (type !== 'section') {
-        throw new Error('cannot add template as section');
+      if (type !== "section") {
+        throw new Error("cannot add template as section");
       }
       const textList = text.concat([
         {
           id: `${key}-${getRandom()}`,
           source: title,
-          type: 'prompt_section',
+          type: "prompt_section",
         },
       ]);
       currentPromptFile.setContent(textList);
@@ -113,14 +120,14 @@ export default class Prompt extends React.Component<
     const { currentPromptFile } = this.state;
     const prompt = currentPromptFile.getContent();
     const convertedPrompt = prompt.map((s) => {
-      if (s.type === 'prompt_section') {
+      if (s.type === "prompt_section") {
         return `{{prompt: ${s.source}}}`;
       } else {
         return s.text;
       }
     });
     this.setState({
-      promptText: convertedPrompt.join(''),
+      promptText: convertedPrompt.join(""),
     });
   }
 
@@ -130,23 +137,23 @@ export default class Prompt extends React.Component<
     const content = `🚀 ~ create prompt from template using<${promptText}>`;
 
     confirm({
-      title: 'create prompt',
+      title: "create prompt",
       content,
-      okText: 'go to debug',
+      okText: "go to debug",
       onOk: () => {
         this.setState((state) => {
           const { messageList: m } = state;
           return {
             ...state,
-            messageList: m.concat([{ type: 'post', message: content }]),
-            promptText: '',
+            messageList: m.concat([{ type: "post", message: content }]),
+            promptText: "",
           };
         });
       },
       okButtonProps: {
-        className: 'text-gray-900 border-slate-500',
+        className: "text-gray-900 border-slate-500",
       },
-      cancelText: 'return to rebuild',
+      cancelText: "return to rebuild",
     });
   }
 
@@ -154,13 +161,13 @@ export default class Prompt extends React.Component<
     const { messageList } = this.state;
     if (messageList.length > 0) {
       const last = messageList[messageList.length - 1];
-      if (last.type === 'post') {
+      if (last.type === "post") {
         Promise.resolve(`${last.message} result from GPT~~`).then((res) => {
           this.setState((state) => {
             return {
               ...state,
               messageList: state.messageList.concat([
-                { type: 'receive', message: res },
+                { type: "receive", message: res },
               ]),
             };
           });
@@ -169,22 +176,44 @@ export default class Prompt extends React.Component<
     }
   }
 
+  handleAddAgent() {
+    console.log("add agent");
+  }
+
   render() {
     const { currentPromptFile, promptText, messageList, projectTree } =
       this.state;
     const items = [
       {
-        key: 'project',
-        label: 'Project',
+        key: "project",
+        label: (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+            }}
+          >
+            <div>Project</div>
+            <Button
+              onClick={this.handleAddAgent}
+              type="text"
+              icon={<PlusOutlined />}
+            />
+          </div>
+        ),
         children: (
           <Tree
-            fieldNames={{ title: 'title', key: 'key', children: 'children' }}
+            fieldNames={{ title: "title", key: "key", children: "children" }}
             onSelect={(selectedKeys, { node }) => {
-              if (node?.type !== 'folder') {
+              if (node?.type !== "folder") {
                 this.onPrompFiletOpen(node);
               }
             }}
-            treeData={projectTree}
+            treeData={[
+              { id: 1, name: "sad", type: "folder", children: null },
+              { id: 5, name: "翻译官.pmt", type: "prompt", children: null },
+            ]}
             // onRightClick={({ node }) => this.addSectionToEditor(node)}
           />
         ),
@@ -200,7 +229,7 @@ export default class Prompt extends React.Component<
             <div className="overflow-y-auto">
               <Collapse
                 items={items}
-                defaultActiveKey={['project']}
+                defaultActiveKey={["project"]}
                 bordered={false}
               />
             </div>
@@ -226,7 +255,7 @@ export default class Prompt extends React.Component<
               >
                 save and preview
               </Button>
-              {currentPromptFile?.getType() === 'template' ? (
+              {currentPromptFile?.getType() === "template" ? (
                 <Button
                   className="m-2 font-medium bg-slate-200 text-slate-700 border-slate-500"
                   onClick={this.createPrompt}
