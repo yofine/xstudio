@@ -1,9 +1,10 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
-import { AuthProvider, useAuth } from './AuthContext';
 import Layout from './layout/BaseLayout';
 import Login from './pages/Login';
 import routes from './routes';
+import AuthWrapper from './AuthWrapper';
+import { useAuth } from './AuthContext';
 
 const ProtectedRoute = () => {
   const { isAuthenticated } = useAuth();
@@ -17,12 +18,18 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <ProtectedRoute />, // Ensure this is defined before using
+    element: <AuthWrapper />, // 包裹 AuthProvider 和 RouterProvider
     children: [
       {
         path: "/",
-        element: <Layout />,
-        children: routes,
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: "/",
+            element: <Layout />,
+            children: routes,
+          },
+        ],
       },
     ],
   },
@@ -30,9 +37,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <RouterProvider router={router} />
   );
 }
 

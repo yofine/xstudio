@@ -34,8 +34,16 @@ export const getProjectList = (
   return axios.get(`/project/list/${page || 1}/${pageSize || 100}`);
 };
 
-export const getProjectFileTree = (projectId: number): Promise<any> => {
-  return axios.get(`/project/tree/get/${projectId}`);
+export const getProjectFileTree = async (projectId: number): Promise<any> => {
+  try {
+    const response = await axios.get(`/project/tree/get/${projectId}`);
+    const responseString = JSON.stringify(response);
+    console.log(responseString)
+    return response
+  } catch (error) {
+    console.error('Error fetching project file tree:', error);
+    throw error;
+  }
 };
 
 export const getPromptTemplate = (

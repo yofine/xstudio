@@ -1,88 +1,108 @@
-import React from 'react';
-import { Tree, TreeProps } from 'antd';
+import React, { useState, useRef } from 'react';
+import { Tree, Dropdown, Menu } from 'antd';
 import { DataNode } from 'antd/lib/tree';
 
-const mockTreeData = [
-  {
-    title: 'parent 1',
-    key: '0-0',
-    children: [
-      {
-        title: 'parent 1-0',
-        key: '0-0-0',
-        children: [
-          {
-            title: 'leaf1',
-            key: '0-0-0-0',
-          },
-          {
-            title: 'leaf2',
-            key: '0-0-0-1',
-          },
-          {
-            title: 'leaf3',
-            key: '0-0-0-2',
-          },
-        ],
-      },
-      {
-        title: 'parent 1-1',
-        key: '0-0-1',
-        children: [
-          {
-            title: 'leaf4',
-            key: '0-0-1-0',
-          },
-        ],
-      },
-      {
-        title: 'parent 1-2',
-        key: '0-0-2',
-        children: [
-          {
-            title: 'leaf5',
-            key: '0-0-2-0',
-          },
-          {
-            title: 'leaf6',
-            key: '0-0-2-1',
-          },
-        ],
-      },
-    ],
-  },
-];
-
 type TreePropType = Omit<TreeProps, 'onSelect' | 'onRightClick'> & {
-  onSelect?: (node: any) => void;
-  onRightClick?: (node: any) => void;
+  onSelect?: (selectedKeys: any, info: { node: any }) => void;
+  onRightClick?: (info: { node: any; event: React.MouseEvent<HTMLDivElement, MouseEvent> }) => void;
   treeData?: DataNode[];
 };
 
 const App = (props: TreePropType) => {
   const { onSelect, treeData, onRightClick } = props;
+  const [rightClickNodeTreeItem, setRightClickNodeTreeItem] = useState(null);
+  const contextMenuRef = useRef<HTMLDivElement>(null);
+
   // tree node click
-  const onNodeSelect = (selectedKeys, info) => {
+  const onNodeSelect = (selectedKeys: any, info: { node: any }) => {
     if (info.node) {
-      onSelect && onSelect(info.node);
+      onSelect && onSelect(selectedKeys, info);
     }
   };
 
   // tree node rightclick
-  const onNodeRightClick = ({ node, event }) => {
-    if (node) {
-      onRightClick && onRightClick(node);
+  const onNodeRightClick = (info: { node: any; event: React.MouseEvent<HTMLDivElement, MouseEvent> }) => {
+    if (info.node) {
+      setRightClickNodeTreeItem({
+        pageX: info.event.clientX,
+        pageY: info.event.clientY,
+        ...info.node,
+      });
+      onRightClick && onRightClick(info);
     }
   };
+
+  const handleMenuClick: Menu['onClick'] = (e) => {
+    console.log('Menu click', e);
+    switch (e.key) {
+      case 'newAgent':
+        // Handle new agent
+        break;
+      case 'publishAgent':
+        // Handle publish agent
+        break;
+      case 'deleteAgent':
+        // Handle delete agent
+        break;
+      default:
+        break;
+    }
+    setRightClickNodeTreeItem(null); // Close the menu after an action is taken
+  };
+
+  const menuItems: Menu['items'] = [
+    {
+      key: 'newAgent',
+      label: '新建Agent',
+    },
+    {
+      key: 'publishAgent',
+      label: '发布Agent',
+    },
+    {
+      key: 'deleteAgent',
+      label: '删除Agent',
+    },
+  ];
+
+  const renderRightClickMenu = () => {
+    if (!rightClickNodeTreeItem) return null;
+    return (
+      <Dropdown
+        menu={{ items: menuItems, onClick: handleMenuClick }}
+        visible
+        trigger={['contextMenu']}
+        onVisibleChange={(flag) => {
+          if (!flag) setRightClickNodeTreeItem(null);
+        }}
+        getPopupContainer={() => document.body}
+      >
+        <div
+          ref={contextMenuRef}
+          style={{
+            position: 'absolute',
+            left: rightClickNodeTreeItem.pageX,
+            top: rightClickNodeTreeItem.pageY,
+            zIndex: 9999,
+          }}
+        />
+      </Dropdown>
+    );
+  };
+
   return (
-    <Tree
-      showLine
-      autoExpandParent
-      multiple={false}
-      onSelect={onNodeSelect}
-      onRightClick={onNodeRightClick}
-      treeData={mockTreeData}
-    />
+    <div style={{ position: 'relative' }}>
+      <Tree
+        showLine
+        autoExpandParent
+        multiple={false}
+        onSelect={onNodeSelect}
+        onRightClick={onNodeRightClick}
+        treeData={treeData}
+      />
+      {renderRightClickMenu()}
+    </div>
   );
 };
+
 export default App;

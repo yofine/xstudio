@@ -6,13 +6,11 @@ import { PromptBlockType } from '@/types/prompt';
 import PromptEditor from '../../components/editor';
 import PromptSession from '@/components/session';
 import PromptFile from '@/core/promptFile';
+import RightClickMenu from '../../components/Menu'; // 引入右键菜单组件
 
 import './index.less';
-// import { useState } from 'react';
 import { getRandom } from '../../utils/utils';
-// import { useEffect } from 'react';
 
-// import { mock_project1_tree, mock_prompt_content } from '@/mock';
 import {
   getProjectFileTree,
   getPromptSection,
@@ -44,35 +42,24 @@ export default class Prompt extends React.Component<
       currentPromptFile: null,
       promptText: '',
       messageList: [{ type: 'receive', message: 'hello world' }],
-      projectTree: {},
+      projectTree: [],
     };
   }
 
   private projectId: number = 1;
 
   componentDidMount(): void {
-    // TODO: projectId 先写死，供调试单个项目，后通过list获取
-    // getProjectList().then((res) => {
-    //   console.log(res);
-    // });
     getProjectFileTree(this.projectId).then((res) => {
       // 树结构转化
       const convert = (node) => {
         return {
           key: node.id,
-          title:
-            node.title +
-            (node.type && node.type !== 'folder' ? '.' + node.type : ''),
-          ...('children' in node
-            ? {
-                children: (node.children || []).map((child) => convert(child)),
-              }
-            : null),
+          title: node.name,
+          children: node.children ? node.children.map((child) => convert(child)) : [],
         };
       };
-      const treenodeData = convert(res)
-
-//       const treenodeData = res;
+      const treenodeData = res.template_tree.map((node) => convert(node));
+      console.log(treenodeData);
       this.setState({
         projectTree: treenodeData,
       });
@@ -83,11 +70,7 @@ export default class Prompt extends React.Component<
     message.error(error.message);
   }
 
-  /**
-   * 打开文件
-   */
   onPrompFiletOpen({ type, title, id }) {
-    // TODO：获取section/template的prompt内容
     const fetchFileContentPromise =
       type === 'section' ? getPromptSection : getPromptTemplate;
 
@@ -108,14 +91,10 @@ export default class Prompt extends React.Component<
     });
   }
 
-  /**
-   * 右键section文件节点添加到编辑器中
-   * */
   addSectionToEditor({ key, title, type }) {
     const { currentPromptFile } = this.state;
     if (currentPromptFile) {
       const text = currentPromptFile.getContent();
-      // template文件不能作为section块添加
       if (type !== 'section') {
         throw new Error('cannot add template as section');
       }
@@ -130,11 +109,7 @@ export default class Prompt extends React.Component<
     }
   }
 
-  /**
-   * 预览prompt富文本
-   */
   previewPrompt() {
-    // 转成富文本
     const { currentPromptFile } = this.state;
     const prompt = currentPromptFile.getContent();
     const convertedPrompt = prompt.map((s) => {
@@ -147,20 +122,12 @@ export default class Prompt extends React.Component<
     this.setState({
       promptText: convertedPrompt.join(''),
     });
-
-    // TODO： 保存到后端
-    // updatePrompTemplate()
   }
 
-  /**
-   * template 编译生成prompt
-   */
   createPrompt() {
     const { promptText } = this.state;
     const { confirm } = Modal;
-    // TODO: 编译template
-    // compilePromptTemplate()
-    const content = "🚀 ~ create prompt from template using<${promptText}>";
+    const content = `🚀 ~ create prompt from template using<${promptText}>`;
 
     confirm({
       title: 'create prompt',
@@ -175,7 +142,6 @@ export default class Prompt extends React.Component<
             promptText: '',
           };
         });
-        //
       },
       okButtonProps: {
         className: 'text-gray-900 border-slate-500',
@@ -184,9 +150,6 @@ export default class Prompt extends React.Component<
     });
   }
 
-  /**
-   * 监听messageList变化
-   */
   onMessageListChange() {
     const { messageList } = this.state;
     if (messageList.length > 0) {
@@ -215,14 +178,14 @@ export default class Prompt extends React.Component<
         label: 'Project',
         children: (
           <Tree
-            fieldNames={{ title: 'title', key: 'id', children: 'children' }}
-            onSelect={(node) => {
+            fieldNames={{ title: 'title', key: 'key', children: 'children' }}
+            onSelect={(selectedKeys, { node }) => {
               if (node?.type !== 'folder') {
                 this.onPrompFiletOpen(node);
               }
             }}
-            treeData={[projectTree as any]}
-            onRightClick={this.addSectionToEditor}
+            treeData={projectTree}
+            // onRightClick={({ node }) => this.addSectionToEditor(node)}
           />
         ),
       },
@@ -230,7 +193,7 @@ export default class Prompt extends React.Component<
     return (
       <div className="xstudio-prompt">
         <div className="left">
-          <div className="prompt-explorer h-full bg-slate-50	">
+          <div className="prompt-explorer h-full bg-slate-50">
             <label className="p-4 text-sm font-medium text-gray-900 justify-start flex">
               EXPLORER
             </label>
@@ -245,7 +208,7 @@ export default class Prompt extends React.Component<
         </div>
         <div className="center">
           <div className="h-full">
-            <label className="p-2 font-medium text-gray-900 justify-center flex bg-slate-50	">
+            <label className="p-2 font-medium text-gray-900 justify-center flex bg-slate-50">
               Prompt
             </label>
             <PromptEditor
@@ -258,14 +221,14 @@ export default class Prompt extends React.Component<
               <div>{promptText}</div>
               <Button
                 type="primary"
-                className="m-2 font-medium bg-slate-200 text-slate-700 border-slate-500 "
+                className="m-2 font-medium bg-slate-200 text-slate-700 border-slate-500"
                 onClick={this.previewPrompt}
               >
                 save and preview
               </Button>
               {currentPromptFile?.getType() === 'template' ? (
                 <Button
-                  className="m-2 font-medium bg-slate-200 text-slate-700 border-slate-500 "
+                  className="m-2 font-medium bg-slate-200 text-slate-700 border-slate-500"
                   onClick={this.createPrompt}
                 >
                   create prompt
