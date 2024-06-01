@@ -35,11 +35,21 @@ export const getProjectList = (
 };
 
 export const getProjectFileTree = async (projectId: number): Promise<any> => {
-  try {
-    const response = await axios.get(`/project/tree/get/${projectId}`);
-    const responseString = JSON.stringify(response);
-    console.log(responseString)
-    return response
+ try {
+    // Mock data
+    const mockResponse = [
+      { id: 1, name: "sad", type: "folder", children: null },
+      { id: 5, name: "翻译官.pmt", type: "prompt", children: null }
+    ];
+
+    // Convert mock data to string
+    const responseString = JSON.stringify(mockResponse);
+
+    // Log the response string
+    console.log(responseString);
+
+    // Return the mock response to mimic axios behavior
+    return { data: mockResponse };
   } catch (error) {
     console.error('Error fetching project file tree:', error);
     throw error;
