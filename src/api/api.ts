@@ -36,6 +36,7 @@ export const getProjectList = (
 
 export const getProjectFileTree = async (projectId: number): Promise<any> => {
  try {
+//      const response = await axios.get(`/project/tree/get/${projectId}`);
     // Mock data
     const mockResponse = [
       { id: 1, name: "sad", type: "folder", children: null },
